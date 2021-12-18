@@ -30,9 +30,8 @@ end
 def read_list()
     file = File.read('./list.json')
     data_hash = JSON.parse(file)
-    x = data_hash["nfts"]
-    
-    x.each do |k,v| 
+
+    data_hash.each do |k,v| 
         puts "#{k}: #{v}"
     end
 
@@ -44,7 +43,7 @@ def read_list()
     int = nft.to_i
     if int == 0 then return end
     if int > 0 and int <= x.size then
-        res = api(x[nft])
+        res = api(data_hash[nft])
         puts res
     end
 
@@ -53,10 +52,8 @@ end
 def print_list()
     file = File.read('./list.json')
     data_hash = JSON.parse(file)
-    x = data_hash["nfts"]
-    
-    x.each do |k,v| 
-        res = api(x[k])
+    data_hash.each do |k,v| 
+        res = api(data_hash[k])
         puts "#{v}: #{res}"
     end
 end
@@ -64,9 +61,7 @@ end
 def delete_from_list()
     file = File.read('./list.json')
     data_hash = JSON.parse(file)
-    x = data_hash["nfts"]
-    
-    x.each do |k,v| 
+    data_hash.each do |k,v| 
         puts "#{k}: #{v}"
     end
 
@@ -78,9 +73,21 @@ def delete_from_list()
     int = nft.to_i
 
     if int == 0 then return end
-    if int > 0 and int <= x.size then
-        x.delete(nft)
-        File.write('./list.json', JSON.dump(data_hash))
+    if int > 0 and int <= data_hash.size then
+        data_hash.delete(nft)
+        
+        
+        #re-order it
+        j = {}
+        i = 1
+        data_hash.each do |k,v| 
+            j[i] = v
+            i+=1
+        end
+
+
+
+        File.write('./list.json', JSON.dump(j))
     end
 
 end
@@ -91,9 +98,8 @@ def append_list()
     if nft == "none" || nft == "exit" then return end
     file = File.read('./list.json')
     data_hash = JSON.parse(file)
-    x = data_hash["nfts"]
-    size = x.size + 1
-    x[size] = nft
+    size = data_hash.size + 1
+    data_hash[size] = nft
     File.write('./list.json', JSON.dump(data_hash))
 end
 
@@ -105,7 +111,7 @@ def loop_list()
 
     puts "Loop repeat after how many seconds?\n"
     t = gets.chomp
-    if nft == "none" || nft == "exit" then return end
+    if t == "none" || t == "exit" then return end
     t = t.to_i
 
     $thr << Thread.new { 
@@ -135,6 +141,19 @@ def list_commands()
     puts ""
 end
 
+def byo()
+    num = 0
+    array = ['byopills', 'byoland', 'apostles-genesis', 'byovape']
+    
+    array.each do |e|
+        a = api(e) 
+        a ||= 0
+        num = num + a
+    end
+    num = num * 3
+    puts "BYO total value = #{num}"
+end
+
 def command(arg)
     case arg
     when "add"
@@ -153,6 +172,8 @@ def command(arg)
         list_commands
     when "exit"
         exit(true)
+    when "byo"
+        byo()
     else
         puts api(arg)
     end
