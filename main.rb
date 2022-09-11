@@ -86,6 +86,14 @@ def command(arg)
     end
 end
 
+if !File.exists?("coin.json")
+    File.open("coin.json", "w+") {|f| f.write("{}") }
+end
+if !File.exists?("nft.json")
+    File.open("nft.json", "w+") {|f| f.write("{}") }
+end
+
+
 while true
     command(gets.chomp)
 end
