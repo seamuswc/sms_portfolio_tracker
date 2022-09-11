@@ -1,4 +1,10 @@
-class Nft
+require 'uri'
+require 'net/http'
+require 'openssl'
+require 'json'
+
+
+class NFT
 
     def api(nft, amount) 
         begin

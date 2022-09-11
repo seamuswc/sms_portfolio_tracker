@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'uri'
-gem 'net/http'
 gem 'openssl'
 gem 'json'
+gem 'vonage'
+gem 'dotenv'

@@ -1,12 +1,14 @@
 require 'coingecko_ruby'
+require 'json'
+
 
 class Coin
 
     def api(coin, amount) 
         client = CoingeckoRuby::Client.new
         price = client.price(coin)
-        price = price[coin]["usd"].to_i
-        price =  price * amount.to_i
+        price = price[coin]["usd"]
+        price =  price.to_f * amount.to_f
         return price
         #return "#{amount} #{coin} is: #{price}. \n"
     end

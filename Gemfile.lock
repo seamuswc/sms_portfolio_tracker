@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    coingecko_ruby (0.4.2)
     dotenv (2.8.1)
     json (2.6.2)
     jwt (2.5.0)
@@ -24,7 +23,6 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
-  coingecko_ruby
   dotenv
   json
   openssl

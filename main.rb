@@ -1,123 +1,31 @@
-require 'uri'
-require 'net/http'
-require 'openssl'
-require 'json'
+require_relative "coin"
+require_relative "nft"
+require_relative "files"
+require_relative "sms"
+
+@coin = Coin.new
+@nft = NFT.new
+@sms = SMS.new
 
 $thr = []
 
-def api(nft) 
-    begin
-        url = URI("https://api.opensea.io/collection/#{nft}")
-        #URI? check to prevent program crash
-    rescue
-        puts "NFT URL not found"
-        return
-    end
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    request = Net::HTTP::Get.new(url)
-    res = http.request(request)
-
-    if res.code == "200"
-        parsed = JSON.parse(res.body)
-        return parsed["collection"]["stats"]["floor_price"]
-    else
-        puts "couldnt find nft"
-    end
-
-end
-
-def read_list()
-    file = File.read('./list.json')
-    data_hash = JSON.parse(file)
-
-    data_hash.each do |k,v| 
-        puts "#{k}: #{v}"
-    end
-
-    puts "Select nft by number to see floor or type 'none' to exit\n"
-    nft = gets.chomp
-
-    if nft == "none" || nft == "exit" then return end
-    
-    int = nft.to_i
-    if int == 0 then return end
-    if int > 0 and int <= x.size then
-        res = api(data_hash[nft])
-        puts res
-    end
-
-end
-
-def print_list()
-    file = File.read('./list.json')
-    data_hash = JSON.parse(file)
-    data_hash.each do |k,v| 
-        res = api(data_hash[k])
-        puts "#{v}: #{res}"
-    end
-end
-
-def delete_from_list()
-    file = File.read('./list.json')
-    data_hash = JSON.parse(file)
-    data_hash.each do |k,v| 
-        puts "#{k}: #{v}"
-    end
-
-    puts "Select nft by number to delete or type 'none' to exit\n"
-    nft = gets.chomp
-
-    if nft == "none" || nft == "exit" then return end
-
-    int = nft.to_i
-
-    if int == 0 then return end
-    if int > 0 and int <= data_hash.size then
-        data_hash.delete(nft)
-        
-        
-        #re-order it
-        j = {}
-        i = 1
-        data_hash.each do |k,v| 
-            j[i] = v
-            i+=1
-        end
-
-
-
-        File.write('./list.json', JSON.dump(j))
-    end
-
-end
-
-def append_list()
-    puts "Which nft would you like to add?\n"
-    nft = gets.chomp
-    if nft == "none" || nft == "exit" then return end
-    file = File.read('./list.json')
-    data_hash = JSON.parse(file)
-    size = data_hash.size + 1
-    data_hash[size] = nft
-    File.write('./list.json', JSON.dump(data_hash))
-end
-
-def loop_list() 
+def start() 
     if($thr.length >=1)
         puts "Loop already running"
         return
     end
-
-    puts "Loop repeat after how many seconds?\n"
-    t = gets.chomp
-    if t == "none" || t == "exit" then return end
-    t = t.to_i
-
+    puts "starting sms program......"
     $thr << Thread.new { 
         while true
-            print_list
-            sleep t
+            time = Time.new
+            if time.hour == 12
+                @sms.send(@coin.run)
+                puts "coin sms sent"
+                sleep(5)
+                @sms.send(@nft.run)
+                puts "nft sms sent"
+            end
+            sleep(3600)
         end
     }
 end
@@ -127,59 +35,57 @@ def stop()
         Thread.kill($thr.first)
         $thr.pop
     end
+    puts "hopefully succesfully eneded sms program....."
 end
 
 def list_commands()
     puts ""
-    puts "add       : appends to list"
-    puts "delete    : delete from list"
-    puts "list      : read list and select"
-    puts "l         : print full list"
-    puts "loop      : print list on a time loop"
-    puts "stop      : stops loop"
-    puts "exit      : will exit any command or the program"
+    puts "add coin       : appends coin to list"
+    puts "delete coin    : delete coin from list"
+    puts "list coin      : reads coin list"
+    puts "add nft        : appends nft to list"
+    puts "delete nft     : delete nft from list"
+    puts "list nft       : reads nft list"
+    puts "threads        : thread count check"
+    puts "test           : sends an sms of coins"
+    puts "start          : starts the sms program"
+    puts "stop           : stops sms thread"
+    puts "exit           : will exit any command or the program"
     puts ""
-end
-
-def byo()
-    num = 0
-    array = ['byopills', 'byoland', 'apostles-genesis', 'byovape']
-    
-    array.each do |e|
-        a = api(e) 
-        a ||= 0
-        num = num + a
-    end
-    num = num * 3
-    puts "BYO total value = #{num}"
 end
 
 def command(arg)
     case arg
-    when "add"
-        append_list()
-    when "delete"
-        delete_from_list()
-    when "list"
-        read_list
-    when "l"
-        print_list
-    when "loop"
-        loop_list
+    when "add coin"
+        Files.new('coin').append_list
+    when "delete coin"
+        Files.new('coin').delete_from_list
+    when "list coin"
+        Files.new('coin').print_list
+    when "add nft"
+        Files.new('nft').append_list
+    when "delete nft"
+        Files.new('nft').delete_from_list
+    when "list nft"
+        Files.new('nft').print_list
+    when "start"
+        start
     when "stop"
         stop
+    when "test"
+        @sms.send(@coin.run)
+        puts "sent sms"
+    when "threads"
+        puts $thr.count
     when "help"
         list_commands
     when "exit"
         exit(true)
-    when "byo"
-        byo()
     else
-        puts api(arg)
+        puts "command not found"
     end
 end
 
-print_list()
 while true
     command(gets.chomp)
 end
