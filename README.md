@@ -9,6 +9,19 @@
 
 ###### Step 4 - 'help' to view the commands
 
+###### Step 5 - recommend using 'nohup' if running through a ssh connection
+
+## BUGS / NOTES
+
+The program pulls its api data from www.coingecko.com.
+Because of this, when enetering the coin anem you msut use the api token name provided by coingecko.
+
+If you would like to add bitcoun the api name is 'bitcoin'
+However for Synthetix it is 'havven'.
+
+There is no error checking and wrong api tags will crash the program.
+
+
 
 ## License
 
