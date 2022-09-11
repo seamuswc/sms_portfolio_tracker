@@ -14,9 +14,9 @@
 ## BUGS / NOTES
 
 The program pulls its api data from www.coingecko.com.
-Because of this, when enetering the coin anem you msut use the api token name provided by coingecko.
+Because of this, when enetering the coin name you must use the api token name provided by coingecko.
 
-If you would like to add bitcoun the api name is 'bitcoin'
+If you would like to add bitcoin, the api name is 'bitcoin'.
 However for Synthetix it is 'havven'.
 
 There is no error checking and wrong api tags will crash the program.
