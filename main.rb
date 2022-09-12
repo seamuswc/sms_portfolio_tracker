@@ -73,7 +73,7 @@ def command(arg)
     when "stop"
         stop
     when "test"
-        @sms.send(@coin.run)
+        @sms.send(@nft.run)
         puts "sent sms"
     when "threads"
         puts $thr.count

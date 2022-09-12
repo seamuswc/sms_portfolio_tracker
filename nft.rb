@@ -1,6 +1,5 @@
 require 'uri'
 require 'net/http'
-require 'openssl'
 require 'json'
 
 
@@ -24,6 +23,7 @@ class NFT
             price = parsed["collection"]["stats"]["floor_price"].to_f
         else
             puts "couldnt find nft"
+            return "couldnt find nft"
         end
 
         price =  price * amount.to_i
