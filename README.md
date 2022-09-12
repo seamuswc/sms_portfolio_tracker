@@ -13,7 +13,7 @@ TO_NUMBER = "+"
 
 ###### Step 2 - Create an account to get your api keys at: https://www.vonage.com
 
-###### Step 3 - bundle install to install needed gems
+###### Step 3 - 'bundle install' to install needed gems, 'ruby main.rb' to start program
 
 ###### Step 4 - 'help' to view the commands
 
