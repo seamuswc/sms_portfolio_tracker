@@ -3,10 +3,6 @@ require_relative "nft"
 require_relative "files"
 require_relative "sms"
 
-@coin = Coin.new
-@nft = NFT.new
-@sms = SMS.new
-
 $thr = []
 
 def start() 
@@ -16,16 +12,19 @@ def start()
     end
     puts "starting sms program......"
     $thr << Thread.new { 
+        coin = Coin.new
+        nft = NFT.new
+        sms = SMS.new
         while true
             time = Time.new
             if time.hour == 12
-                @sms.send(@coin.run)
+                sms.send(coin.run)
                 puts "coin sms sent"
                 sleep(5)
-                @sms.send(@nft.run)
+                sms.send(nft.run)
                 puts "nft sms sent"
             end
-            sleep(3600)
+            sleep(3601)
         end
     }
 end
@@ -73,7 +72,9 @@ def command(arg)
     when "stop"
         stop
     when "test"
-        @sms.send(@nft.run)
+        sms = SMS.new
+        coin = Coin.new
+        sms.send(coin.run)
         puts "sent sms"
     when "threads"
         puts $thr.count
